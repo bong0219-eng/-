@@ -51,10 +51,10 @@
     button.filter { min-height: 46px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); font-size: 1rem; font-weight: 800; }
     button.filter.active { background: var(--teal); color: #fff; border-color: var(--teal); }
     .count { margin: 8px 3px 0; color: var(--muted); font-size: .94rem; }
-    .section-title { margin: 22px 2px 10px; padding: 10px 13px; border-radius: 14px; background: #eaf4f2; color: #0f766e; font-size: 1.13rem; font-weight: 950; letter-spacing: -.02em; scroll-margin-top: calc(var(--sticky-offset, 190px) + 12px); }
+    .section-title { margin: 22px 2px 10px; padding: 10px 13px; border-radius: 14px; background: #eaf4f2; color: #0f766e; font-size: 1.13rem; font-weight: 950; letter-spacing: -.02em; }
     .list { display: grid; gap: 12px; }
     .section-wrap.hidden-section { display: none; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px 15px; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); scroll-margin-top: calc(var(--sticky-offset, 190px) + 12px); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px 15px; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); scroll-margin-top: calc(var(--sticky-offset, 170px) + 12px); }
     .topline { display: flex; align-items: flex-start; gap: 0; }
     .person { min-width: 0; width: 100%; }
     .card h2 { margin: 0; font-size: 1.34rem; line-height: 1.24; letter-spacing: -0.02em; }
@@ -97,7 +97,7 @@
       </div>
 
     <section class="toolbar" aria-label="검색 및 분류">
-      <input id="search" class="search" type="search" placeholder="이름·세례명·직책·전화번호 검색" autocomplete="off">
+      <input id="search" class="search" type="search" placeholder="이름·세례명·직책·전화번호 검색" autocomplete="off" inputmode="search" enterkeyhint="search">
       <div class="filters">
         <button type="button" class="filter active" data-filter="전체">전체</button>
         <button type="button" class="filter" data-filter="사목위원">사목위원</button>
@@ -573,7 +573,7 @@
           <a class="phone-link" href="tel:01034606230" aria-label="윤상철 율리오 전화 연결">010-3460-6230</a>
         </div>
       </article>
-      <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 안나회장 010-8595-4508 7월 15일 7구역장">
+      <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 안나회장 010-8595-4508 7월 15일 7구역장 겸임">
         <div class="topline">
           <div class="person">
             <h2>박정란 가밀라</h2>
@@ -899,6 +899,10 @@
       const wraps = Array.from(document.querySelectorAll('.section-wrap'));
       let currentFilter = '전체';
       let revealTimer = null;
+      let isComposing = false;
+      let focusBaseY = 0;
+      let focusLockUntil = 0;
+      let focusLockTimers = [];
 
       function normalize(s) {
         return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
@@ -930,8 +934,39 @@
         }, 80);
       }
 
+      function keepToolbarStill(beforeTop) {
+        if (!toolbar || document.activeElement !== search || typeof beforeTop !== 'number') return;
+        window.requestAnimationFrame(() => {
+          const afterTop = toolbar.getBoundingClientRect().top;
+          const diff = afterTop - beforeTop;
+          if (Math.abs(diff) > 1) window.scrollBy(0, diff);
+        });
+      }
+
+      function clearFocusLockTimers() {
+        focusLockTimers.forEach(id => window.clearTimeout(id));
+        focusLockTimers = [];
+      }
+
+      function restoreFocusPosition() {
+        if (document.activeElement !== search) return;
+        if (Date.now() > focusLockUntil) return;
+        window.scrollTo(0, focusBaseY);
+      }
+
+      function startFocusLock() {
+        focusBaseY = window.scrollY;
+        focusLockUntil = Date.now() + 800;
+        clearFocusLockTimers();
+        [0, 80, 180, 320, 520, 760].forEach(delay => {
+          focusLockTimers.push(window.setTimeout(restoreFocusPosition, delay));
+        });
+      }
+
       function apply(options) {
         const shouldReveal = !!(options && options.reveal);
+        const shouldPreserveToolbar = !!(options && options.preserveToolbar);
+        const toolbarTopBefore = shouldPreserveToolbar && toolbar ? toolbar.getBoundingClientRect().top : null;
         const q = normalize(search.value);
         const qDigits = onlyDigits(search.value);
         let shown = 0;
@@ -961,11 +996,20 @@
         count.textContent = (currentFilter === '전체' ? '전체' : currentFilter) + ' ' + shown + '명';
         empty.style.display = shown === 0 ? 'block' : 'none';
 
+        if (shouldPreserveToolbar) keepToolbarStill(toolbarTopBefore);
         if (shouldReveal && shown > 0) revealFirstVisibleCard();
+      }
+
+      function finishSearch() {
+        apply({ reveal: true });
+        if (document.activeElement === search) {
+          search.blur();
+        }
       }
 
       filters.forEach(btn => {
         btn.addEventListener('click', () => {
+          if (document.activeElement === search) search.blur();
           filters.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentFilter = btn.dataset.filter;
@@ -973,8 +1017,53 @@
         });
       });
 
-      search.addEventListener('input', () => apply({ reveal: true }));
-      window.addEventListener('resize', syncStickyTop, { passive: true });
+      search.addEventListener('focus', () => {
+        // 키보드가 열릴 때 브라우저가 화면을 위아래로 밀어 올리는 것을 짧게 보정함
+        startFocusLock();
+      });
+
+      search.addEventListener('blur', () => {
+        clearFocusLockTimers();
+        focusLockUntil = 0;
+      });
+
+      search.addEventListener('compositionstart', () => {
+        isComposing = true;
+      });
+
+      search.addEventListener('compositionend', () => {
+        isComposing = false;
+        // 한글 조합이 끝나는 즉시 검색하되, 검색창 위치는 그대로 유지
+        apply({ reveal: false, preserveToolbar: true });
+      });
+
+      search.addEventListener('input', () => {
+        // 입력하는 즉시 검색 결과를 갱신하되, 입력 중에는 자동 스크롤하지 않음
+        window.clearTimeout(revealTimer);
+        apply({ reveal: false, preserveToolbar: true });
+      });
+
+      search.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !isComposing) {
+          event.preventDefault();
+          finishSearch();
+        }
+      });
+
+      search.addEventListener('search', () => {
+        apply({ reveal: true });
+        if (normalize(search.value)) {
+          window.setTimeout(finishSearch, 0);
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        syncStickyTop();
+        restoreFocusPosition();
+      }, { passive: true });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', restoreFocusPosition, { passive: true });
+      }
       window.addEventListener('orientationchange', syncStickyTop);
       syncStickyTop();
       apply();
