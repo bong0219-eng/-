@@ -38,13 +38,13 @@
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
     body { padding-bottom: 28px; }
-    header { background: linear-gradient(135deg, var(--navy), #334155); color: #fff; padding: 22px 17px 18px; position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 18px rgba(15, 23, 42, .18); }
+    header { background: linear-gradient(135deg, var(--navy), #334155); color: #fff; padding: 22px 17px 18px; position: sticky; top: 0; z-index: 20; box-shadow: 0 4px 18px rgba(15, 23, 42, .18); }
     .title { max-width: 900px; margin: 0 auto; }
     h1 { margin: 0; font-size: 1.42rem; line-height: 1.25; letter-spacing: -0.02em; }
     .subtitle { margin: 8px 0 0; font-size: 1rem; line-height: 1.45; opacity: .92; }
-    main { max-width: 900px; margin: 0 auto; padding: 14px; }
+    main { max-width: 900px; margin: 0 auto; padding: 10px 14px 14px; }
     .notice { background: var(--soft2); border: 1px solid #f2d58b; border-radius: 18px; padding: 14px 15px; margin: 12px 0 14px; font-size: 1.02rem; line-height: 1.55; }
-    .toolbar { background: rgba(255,255,255,.94); border: 1px solid var(--line); border-radius: 18px; padding: 12px; margin-bottom: 14px; position: sticky; top: 102px; z-index: 9; box-shadow: 0 8px 20px rgba(15, 23, 42, .08); backdrop-filter: blur(8px); }
+    .toolbar { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 18px 18px; padding: 6px 10px 10px; margin-bottom: 14px; position: sticky; top: calc(var(--sticky-top, 86px) - 1px); z-index: 19; box-shadow: 0 8px 20px rgba(15, 23, 42, .08); backdrop-filter: blur(8px); }
     .search { width: 100%; min-height: 52px; border: 2px solid #d3dae6; border-radius: 14px; padding: 0 14px; font-size: 1.05rem; color: var(--ink); outline: none; background: #fff; }
     .search:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(15,118,110,.12); }
     .filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
@@ -55,12 +55,11 @@
     .list { display: grid; gap: 12px; }
     .section-wrap.hidden-section { display: none; }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px 15px; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); }
-    .topline { display: flex; align-items: flex-start; gap: 12px; }
-    .num { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; font-size: .93rem; font-weight: 900; }
-    .person { min-width: 0; }
+    .topline { display: flex; align-items: flex-start; gap: 0; }
+    .person { min-width: 0; width: 100%; }
     .card h2 { margin: 0; font-size: 1.34rem; line-height: 1.24; letter-spacing: -0.02em; }
     .role { margin: 5px 0 0; font-size: 1.06rem; line-height: 1.38; color: #334155; font-weight: 750; }
-    .extras { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-left: 44px; }
+    .extras { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-left: 0; }
     .extra-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0 9px; border-radius: 999px; background: var(--soft); color: var(--teal); font-size: .92rem; font-weight: 800; }
     .info-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 11px; }
     .label { flex: 0 0 auto; color: var(--muted); font-size: .96rem; font-weight: 800; }
@@ -75,7 +74,6 @@
     @media (min-width: 720px) {
       .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       h1 { font-size: 1.72rem; }
-      .toolbar { top: 104px; }
     }
     @media (max-width: 360px) {
       header { padding-left: 14px; padding-right: 14px; }
@@ -83,7 +81,6 @@
       .card h2 { font-size: 1.22rem; }
       .role { font-size: 1rem; }
       .phone-link { font-size: 1.12rem; }
-      .toolbar { top: 116px; }
     }
   </style>
 </head>
@@ -115,7 +112,6 @@
       <div class="list">
       <article class="card" data-section="사목위원" data-search="사목위원 김해원 가브리엘 주임신부님 010-7355-1228 9월 29일">
         <div class="topline">
-          <span class="num">1</span>
           <div class="person">
             <h2>김해원 가브리엘</h2>
             <p class="role">주임신부님</p>
@@ -133,7 +129,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 김병훈 세례자요한 보좌신부님 010-7767-1934 6월 24일">
         <div class="topline">
-          <span class="num">2</span>
           <div class="person">
             <h2>김병훈 세례자요한</h2>
             <p class="role">보좌신부님</p>
@@ -151,7 +146,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박재영 클라라 전교수녀님 010-9408-4211 8월 11일">
         <div class="topline">
-          <span class="num">3</span>
           <div class="person">
             <h2>박재영 클라라</h2>
             <p class="role">전교수녀님</p>
@@ -169,7 +163,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박희정 마르띤 전교수녀님 010-8109-4626 11월 3일">
         <div class="topline">
-          <span class="num">4</span>
           <div class="person">
             <h2>박희정 마르띤</h2>
             <p class="role">전교수녀님</p>
@@ -187,7 +180,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 최호용 토마스모어 총회장 010-3542-9342 6월 22일">
         <div class="topline">
-          <span class="num">5</span>
           <div class="person">
             <h2>최호용 토마스모어</h2>
             <p class="role">총회장</p>
@@ -205,7 +197,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 이대헌 니꼴라오 사목 남부회장 010-4530-5351 12월 6일">
         <div class="topline">
-          <span class="num">6</span>
           <div class="person">
             <h2>이대헌 니꼴라오</h2>
             <p class="role">사목 남부회장</p>
@@ -223,7 +214,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 윤희자 엘리사벳 사목 여부회장 010-2757-7207 11월 17일 여성위원장">
         <div class="topline">
-          <span class="num">7</span>
           <div class="person">
             <h2>윤희자 엘리사벳</h2>
             <p class="role">사목 여부회장</p>
@@ -241,7 +231,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박재흠 스테파노 사목 총무 010-3509-7284 12월 26일">
         <div class="topline">
-          <span class="num">8</span>
           <div class="person">
             <h2>박재흠 스테파노</h2>
             <p class="role">사목 총무</p>
@@ -259,7 +248,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 유은숙 프란치스카 사목 서기 010-8564-1144 10월 4일">
         <div class="topline">
-          <span class="num">9</span>
           <div class="person">
             <h2>유은숙 프란치스카</h2>
             <p class="role">사목 서기</p>
@@ -277,7 +265,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 조병건 프란치스코 재무위원장 010-3271-4741 10월 4일">
         <div class="topline">
-          <span class="num">10</span>
           <div class="person">
             <h2>조병건 프란치스코</h2>
             <p class="role">재무위원장</p>
@@ -295,7 +282,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 김정옥 실비아 가정위원장 010-9042-3501 11월 3일">
         <div class="topline">
-          <span class="num">11</span>
           <div class="person">
             <h2>김정옥 실비아</h2>
             <p class="role">가정위원장</p>
@@ -313,7 +299,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 이지원 안젤라 교육위원장 010-4811-7262 1월 27일">
         <div class="topline">
-          <span class="num">12</span>
           <div class="person">
             <h2>이지원 안젤라</h2>
             <p class="role">교육위원장</p>
@@ -331,7 +316,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박철암 바르나바 노인위원장 010-3817-8170 6월 11일">
         <div class="topline">
-          <span class="num">13</span>
           <div class="person">
             <h2>박철암 바르나바</h2>
             <p class="role">노인위원장</p>
@@ -349,7 +333,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 김묵주 마리아 복음화위원장 010-2608-5732 8월 15일">
         <div class="topline">
-          <span class="num">14</span>
           <div class="person">
             <h2>김묵주 마리아</h2>
             <p class="role">복음화위원장</p>
@@ -367,7 +350,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박태남 제노베파 사회복지위원장 010-9960-1050 1월 3일">
         <div class="topline">
-          <span class="num">15</span>
           <div class="person">
             <h2>박태남 제노베파</h2>
             <p class="role">사회복지위원장</p>
@@ -385,7 +367,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 정상주 안토니오 생태환경위원장 010-3817-1382 6월 13일">
         <div class="topline">
-          <span class="num">16</span>
           <div class="person">
             <h2>정상주 안토니오</h2>
             <p class="role">생태환경위원장</p>
@@ -403,7 +384,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 유진숙 소피아 성소계발위원장 010-6612-2616 9월 3일">
         <div class="topline">
-          <span class="num">17</span>
           <div class="person">
             <h2>유진숙 소피아</h2>
             <p class="role">성소계발위원장</p>
@@ -421,7 +401,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 박종황 바오로 시설위원장 010-7564-9588 6월 29일">
         <div class="topline">
-          <span class="num">18</span>
           <div class="person">
             <h2>박종황 바오로</h2>
             <p class="role">시설위원장</p>
@@ -439,7 +418,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 이동걸 대건안드레아 전례위원장 010-8342-5236 7월 5일 1구역장">
         <div class="topline">
-          <span class="num">19</span>
           <div class="person">
             <h2>이동걸 대건안드레아</h2>
             <p class="role">전례위원장</p>
@@ -457,7 +435,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 김홍식 요한 보스코 청년청소년위원장 010-5191-3872 1월 31일">
         <div class="topline">
-          <span class="num">20</span>
           <div class="person">
             <h2>김홍식 요한 보스코</h2>
             <p class="role">청년청소년위원장</p>
@@ -475,7 +452,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 김규동 베드로 평신도사도직단체협회장 010-4769-5876 6월 29일 성인복사단장">
         <div class="topline">
-          <span class="num">21</span>
           <div class="person">
             <h2>김규동 베드로</h2>
             <p class="role">평신도사도직단체협회장</p>
@@ -493,7 +469,6 @@
       </article>
       <article class="card" data-section="사목위원" data-search="사목위원 서상봉 그레고리오 홍보위원장 010-8009-4600 1월 2일">
         <div class="topline">
-          <span class="num">22</span>
           <div class="person">
             <h2>서상봉 그레고리오</h2>
             <p class="role">홍보위원장</p>
@@ -516,7 +491,6 @@
       <div class="list">
       <article class="card" data-section="제단체장" data-search="제단체장 이석훈 이냐시오 교사회장 010-2807-6116 미기재">
         <div class="topline">
-          <span class="num">1</span>
           <div class="person">
             <h2>이석훈 이냐시오</h2>
             <p class="role">교사회장</p>
@@ -534,7 +508,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 조미자 막달레나 세라핌 성가대 단장 010-3822-9400 7월 22일">
         <div class="topline">
-          <span class="num">2</span>
           <div class="person">
             <h2>조미자 막달레나</h2>
             <p class="role">세라핌 성가대 단장</p>
@@ -552,7 +525,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 류순영 마리안나 글로리아 성가대 단장 010-6423-7190 4월 17일">
         <div class="topline">
-          <span class="num">3</span>
           <div class="person">
             <h2>류순영 마리안나</h2>
             <p class="role">글로리아 성가대 단장</p>
@@ -570,7 +542,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 허언영 율리아나 성모회 회장 010-2684-6971 6월 19일">
         <div class="topline">
-          <span class="num">4</span>
           <div class="person">
             <h2>허언영 율리아나</h2>
             <p class="role">성모회 회장</p>
@@ -588,7 +559,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 윤상철 율리오 실버복사단 단장 010-3460-6230 12월 2일 성요셉성경대학장 2구역장">
         <div class="topline">
-          <span class="num">5</span>
           <div class="person">
             <h2>윤상철 율리오</h2>
             <p class="role">실버복사단 단장</p>
@@ -606,7 +576,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 안나회장 010-8595-4508 7월 15일">
         <div class="topline">
-          <span class="num">6</span>
           <div class="person">
             <h2>박정란 가밀라</h2>
             <p class="role">안나회장</p>
@@ -624,7 +593,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 견일태 사도요한 위령회장 010-5038-6291 12월 27일">
         <div class="topline">
-          <span class="num">7</span>
           <div class="person">
             <h2>견일태 사도요한</h2>
             <p class="role">위령회장</p>
@@ -642,7 +610,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 주철식 토마스 요셉회장 010-5254-7404 7월 3일">
         <div class="topline">
-          <span class="num">8</span>
           <div class="person">
             <h2>주철식 토마스</h2>
             <p class="role">요셉회장</p>
@@ -660,7 +627,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 강소희 데레사 자모회장 010-4331-1032 10월 15일">
         <div class="topline">
-          <span class="num">9</span>
           <div class="person">
             <h2>강소희 데레사</h2>
             <p class="role">자모회장</p>
@@ -678,7 +644,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 박순옥 루치아 제대회장 010-2522-5203 12월 13일">
         <div class="topline">
-          <span class="num">10</span>
           <div class="person">
             <h2>박순옥 루치아</h2>
             <p class="role">제대회장</p>
@@ -696,7 +661,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 차재민 토마스아퀴나스 콜베 청년회장 010-2876-7573 12월 6일">
         <div class="topline">
-          <span class="num">11</span>
           <div class="person">
             <h2>차재민 토마스아퀴나스</h2>
             <p class="role">콜베 청년회장</p>
@@ -714,7 +678,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 김상엽 바르톨로메오 프란치스코회장 010-5176-9820 8월 24일">
         <div class="topline">
-          <span class="num">12</span>
           <div class="person">
             <h2>김상엽 바르톨로메오</h2>
             <p class="role">프란치스코회장</p>
@@ -732,7 +695,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 허엽 요셉 꾸르실리스따회장 010-8576-3058 3월 19일">
         <div class="topline">
-          <span class="num">13</span>
           <div class="person">
             <h2>허엽 요셉</h2>
             <p class="role">꾸르실리스따회장</p>
@@ -750,7 +712,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 백인석 노엘 m.e 대표부부 010-8591-4456 12월 25일">
         <div class="topline">
-          <span class="num">14</span>
           <div class="person">
             <h2>백인석 노엘</h2>
             <p class="role">M.E 대표부부</p>
@@ -768,7 +729,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 김진문 안드레아 애덕의 모후 cu. 010-2542-2516 11월 3일">
         <div class="topline">
-          <span class="num">15</span>
           <div class="person">
             <h2>김진문 안드레아</h2>
             <p class="role">애덕의 모후 CU.</p>
@@ -786,7 +746,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 김경자 세실리아 천상은총 cu. 010-4512-5232 11월 22일">
         <div class="topline">
-          <span class="num">16</span>
           <div class="person">
             <h2>김경자 세실리아</h2>
             <p class="role">천상은총 CU.</p>
@@ -804,7 +763,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 정봉조 벨라뎃다 천주의 성모 cu. 010-8397-9783 4월 16일">
         <div class="topline">
-          <span class="num">17</span>
           <div class="person">
             <h2>정봉조 벨라뎃다</h2>
             <p class="role">천주의 성모 CU.</p>
@@ -822,7 +780,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 김미수 글라라 평화의 어머니 cu 010-3133-2078 8월 11일">
         <div class="topline">
-          <span class="num">18</span>
           <div class="person">
             <h2>김미수 글라라</h2>
             <p class="role">평화의 어머니 CU</p>
@@ -840,7 +797,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 정남희 엘리사벳 구역협의회 회장 010-5877-8745 11월 5일">
         <div class="topline">
-          <span class="num">19</span>
           <div class="person">
             <h2>정남희 엘리사벳</h2>
             <p class="role">구역협의회 회장</p>
@@ -858,7 +814,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 송순선 요안나 3구역장 010-9565-3500 4월 2일">
         <div class="topline">
-          <span class="num">20</span>
           <div class="person">
             <h2>송순선 요안나</h2>
             <p class="role">3구역장</p>
@@ -876,7 +831,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 권경숙 안젤라 4구역장 010-6533-6982 1월 27일">
         <div class="topline">
-          <span class="num">21</span>
           <div class="person">
             <h2>권경숙 안젤라</h2>
             <p class="role">4구역장</p>
@@ -894,7 +848,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 강인선 아녜스 5구역장 010-8501-6582 1월 21일">
         <div class="topline">
-          <span class="num">22</span>
           <div class="person">
             <h2>강인선 아녜스</h2>
             <p class="role">5구역장</p>
@@ -912,7 +865,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 김종순 세실리아 6구역장 010-2267-6922 11월 22일">
         <div class="topline">
-          <span class="num">23</span>
           <div class="person">
             <h2>김종순 세실리아</h2>
             <p class="role">6구역장</p>
@@ -930,7 +882,6 @@
       </article>
       <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 7구역장 010-8595-4508 7월 15일">
         <div class="topline">
-          <span class="num">24</span>
           <div class="person">
             <h2>박정란 가밀라</h2>
             <p class="role">7구역장</p>
@@ -956,6 +907,15 @@
 
   <script>
     (function() {
+      const header = document.querySelector('header');
+      function syncStickyTop() {
+        if (!header) return;
+        document.documentElement.style.setProperty('--sticky-top', Math.ceil(header.getBoundingClientRect().height) + 'px');
+      }
+      window.addEventListener('resize', syncStickyTop, { passive: true });
+      window.addEventListener('orientationchange', syncStickyTop);
+      syncStickyTop();
+
       const search = document.getElementById('search');
       const cards = Array.from(document.querySelectorAll('.card'));
       const count = document.getElementById('count');
