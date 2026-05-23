@@ -51,10 +51,10 @@
     button.filter { min-height: 46px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); font-size: 1rem; font-weight: 800; }
     button.filter.active { background: var(--teal); color: #fff; border-color: var(--teal); }
     .count { margin: 8px 3px 0; color: var(--muted); font-size: .94rem; }
-    .section-title { margin: 22px 2px 10px; padding: 10px 13px; border-radius: 14px; background: #eaf4f2; color: #0f766e; font-size: 1.13rem; font-weight: 950; letter-spacing: -.02em; }
+    .section-title { margin: 22px 2px 10px; padding: 10px 13px; border-radius: 14px; background: #eaf4f2; color: #0f766e; font-size: 1.13rem; font-weight: 950; letter-spacing: -.02em; scroll-margin-top: calc(var(--sticky-offset, 190px) + 12px); }
     .list { display: grid; gap: 12px; }
     .section-wrap.hidden-section { display: none; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px 15px; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px 15px; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); scroll-margin-top: calc(var(--sticky-offset, 190px) + 12px); }
     .topline { display: flex; align-items: flex-start; gap: 0; }
     .person { min-width: 0; width: 100%; }
     .card h2 { margin: 0; font-size: 1.34rem; line-height: 1.24; letter-spacing: -0.02em; }
@@ -573,7 +573,7 @@
           <a class="phone-link" href="tel:01034606230" aria-label="윤상철 율리오 전화 연결">010-3460-6230</a>
         </div>
       </article>
-      <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 안나회장 010-8595-4508 7월 15일">
+      <article class="card" data-section="제단체장" data-search="제단체장 박정란 가밀라 안나회장 010-8595-4508 7월 15일 7구역장">
         <div class="topline">
           <div class="person">
             <h2>박정란 가밀라</h2>
@@ -890,14 +890,7 @@
   <script>
     (function() {
       const header = document.querySelector('header');
-      function syncStickyTop() {
-        if (!header) return;
-        document.documentElement.style.setProperty('--sticky-top', Math.ceil(header.getBoundingClientRect().height) + 'px');
-      }
-      window.addEventListener('resize', syncStickyTop, { passive: true });
-      window.addEventListener('orientationchange', syncStickyTop);
-      syncStickyTop();
-
+      const toolbar = document.querySelector('.toolbar');
       const search = document.getElementById('search');
       const cards = Array.from(document.querySelectorAll('.card'));
       const count = document.getElementById('count');
@@ -905,16 +898,51 @@
       const filters = Array.from(document.querySelectorAll('.filter'));
       const wraps = Array.from(document.querySelectorAll('.section-wrap'));
       let currentFilter = '전체';
+      let revealTimer = null;
 
-      function normalize(s) { return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' '); }
+      function normalize(s) {
+        return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+      }
 
-      function apply() {
+      function onlyDigits(s) {
+        return (s || '').toString().replace(/\D/g, '');
+      }
+
+      function syncStickyTop() {
+        const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+        const toolbarHeight = toolbar ? Math.ceil(toolbar.getBoundingClientRect().height) : 0;
+        document.documentElement.style.setProperty('--sticky-top', headerHeight + 'px');
+        document.documentElement.style.setProperty('--sticky-offset', (headerHeight + toolbarHeight) + 'px');
+      }
+
+      function revealFirstVisibleCard() {
+        const first = cards.find(card => !card.classList.contains('hidden'));
+        if (!first) return;
+        window.clearTimeout(revealTimer);
+        revealTimer = window.setTimeout(() => {
+          syncStickyTop();
+          const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+          const toolbarHeight = toolbar ? Math.ceil(toolbar.getBoundingClientRect().height) : 0;
+          const offset = headerHeight + toolbarHeight + 12;
+          const rect = first.getBoundingClientRect();
+          const targetY = window.scrollY + rect.top - offset;
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }, 80);
+      }
+
+      function apply(options) {
+        const shouldReveal = !!(options && options.reveal);
         const q = normalize(search.value);
+        const qDigits = onlyDigits(search.value);
         let shown = 0;
         const shownBySection = {};
+
         cards.forEach(card => {
           const sectionOk = currentFilter === '전체' || card.dataset.section === currentFilter;
-          const searchOk = !q || card.dataset.search.includes(q);
+          const rawText = [card.dataset.search || '', card.textContent || ''].join(' ');
+          const haystack = normalize(rawText);
+          const haystackDigits = onlyDigits(rawText);
+          const searchOk = !q || haystack.includes(q) || (!!qDigits && haystackDigits.includes(qDigits));
           const visible = sectionOk && searchOk;
           card.classList.toggle('hidden', !visible);
           if (visible) {
@@ -922,14 +950,18 @@
             shownBySection[card.dataset.section] = (shownBySection[card.dataset.section] || 0) + 1;
           }
         });
+
         wraps.forEach(wrap => {
           const sec = wrap.dataset.sectionWrap;
           const visible = currentFilter === '전체' || currentFilter === sec;
           const hasVisibleCard = !!shownBySection[sec];
           wrap.classList.toggle('hidden-section', !visible || !hasVisibleCard);
         });
+
         count.textContent = (currentFilter === '전체' ? '전체' : currentFilter) + ' ' + shown + '명';
         empty.style.display = shown === 0 ? 'block' : 'none';
+
+        if (shouldReveal && shown > 0) revealFirstVisibleCard();
       }
 
       filters.forEach(btn => {
@@ -937,10 +969,14 @@
           filters.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentFilter = btn.dataset.filter;
-          apply();
+          apply({ reveal: true });
         });
       });
-      search.addEventListener('input', apply);
+
+      search.addEventListener('input', () => apply({ reveal: true }));
+      window.addEventListener('resize', syncStickyTop, { passive: true });
+      window.addEventListener('orientationchange', syncStickyTop);
+      syncStickyTop();
       apply();
     })();
   </script>
